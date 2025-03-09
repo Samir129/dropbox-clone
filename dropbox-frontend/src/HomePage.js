@@ -11,20 +11,35 @@ function HomePage(){
     }, [])
 
     const fetchFiles = async () => {
-        const response = await axios.get('http://localhost:8000/api/files/');
-        setFiles(response.data);
+        try {
+            const response = await axios.get('http://localhost:8080/api/files/');
+            setFiles(response.data);
+        } catch (error) {
+            console.error('Error fetching files:', error);
+            alert('Error fetching files');
+        }
     }
 
     const handleUpload = async () => {
-        const formData  = new FormData();
-        formData.append('file', selectedFile);
+        if (!selectedFile) {
+            alert('Please select a file to upload');
+            return;
+        }
+        try{
+            const formData  = new FormData();
+            formData.append('file', selectedFile);
 
-        await axios.post('http://localhost:8000/api/files', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            }
-        });
-        fetchFiles();
+            await axios.post('http://localhost:8080/api/files', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+            fetchFiles();
+        }
+        catch (error){
+            console.error('Error uploading file:', error);
+            alert('File upload failed');
+        }
     };
 
     return (

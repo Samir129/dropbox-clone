@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# ignore contents of H2-database
+./data
+
+# ignore contents of /uploads
+./uploads
+!uploads

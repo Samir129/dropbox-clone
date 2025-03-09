@@ -33,8 +33,8 @@ build/
 .vscode/
 
 # ignore contents of H2-database
-./data
+./data/*
 
 # ignore contents of /uploads
-./uploads
+./uploads/*
 !uploads

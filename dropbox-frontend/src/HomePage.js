@@ -12,7 +12,7 @@ function HomePage(){
 
     const fetchFiles = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/files/');
+            const response = await axios.get('http://localhost:8080/api/files');
             setFiles(response.data);
         } catch (error) {
             console.error('Error fetching files:', error);

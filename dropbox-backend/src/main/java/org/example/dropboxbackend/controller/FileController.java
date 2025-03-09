@@ -1,5 +1,6 @@
 package org.example.dropboxbackend.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.dropboxbackend.model.File;
 import org.example.dropboxbackend.service.FileService;
 import org.springframework.core.io.Resource;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/files")
 @CrossOrigin(origins = "http://localhost:3000")
+@Slf4j
 public class FileController {
 
     private final FileService fileService;
@@ -29,6 +31,7 @@ public class FileController {
 
     @GetMapping
     public ResponseEntity<List<File>> getAllFiles() {
+        log.info("getAllFiles -- enter");
         return ResponseEntity.ok(fileService.getAllFiles());
     }
 

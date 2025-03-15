@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dropboxbackend.controller.AuthController;
 import org.example.dropboxbackend.exception.CustomValidationException;
+import org.example.dropboxbackend.model.Role;
 import org.example.dropboxbackend.model.User;
 import org.example.dropboxbackend.model.UserAuthentication;
 import org.example.dropboxbackend.repository.UserRepository;
@@ -33,11 +34,27 @@ public class UserService implements UserDetailsService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("ROLE_USER");
+        user.setRole(Role.USER);
         user.setDateCreated(LocalDateTime.now());
 
         userRepository.save(user);
-        log.info("New user saved");
+        log.info("User {} saved", request.getUsername());
+    }
+
+    public void registerAdmin(AuthController.RegisterRequest request){
+        if (userRepository.existsByUsername(request.getUsername())) {
+            log.warn("Requested user already exists");
+            throw new CustomValidationException("Admin already exists", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.ADMIN);
+        user.setDateCreated(LocalDateTime.now());
+
+        userRepository.save(user);
+        log.info("Admin {} saved", request.getUsername());
     }
 
     public void deleteAll(){

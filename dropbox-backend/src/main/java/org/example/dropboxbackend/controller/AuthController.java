@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dropboxbackend.exception.CustomValidationException;
+import org.example.dropboxbackend.model.Role;
 import org.example.dropboxbackend.service.UserService;
 import org.example.dropboxbackend.util.JwtUtil;
 import org.springframework.http.HttpStatus;
@@ -36,11 +37,20 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/register/user")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){
         log.info("Register user endpoint -- enter");
         userService.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(null, request.getUsername()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(request.getUsername()));
+    }
+
+    @PostMapping("/register/admin")
+    public ResponseEntity<?> registerAdmin(@Valid @RequestBody RegisterRequest request){
+        log.info("Requested admin registration");
+        userService.registerAdmin(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new RegisterResponse(request.getUsername(), Role.ADMIN, "Admin registered successfully")
+        );
     }
 
     @PostMapping("/login")
@@ -75,6 +85,7 @@ public class AuthController {
 
     @Getter
     @Setter
+
     public static class RegisterRequest{
 
         @NotNull(message = "Username cannot be null")
@@ -83,6 +94,19 @@ public class AuthController {
         @NotEmpty
         @Size(min = 5, message = "Password must be at least 5 characters")
         private String password;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class RegisterResponse{
+        private String username;
+        private Role role = Role.USER;
+        private String message = "User registered successfully";
+
+        public RegisterResponse(String username){
+            this.username = username;
+        }
     }
 
     @Data

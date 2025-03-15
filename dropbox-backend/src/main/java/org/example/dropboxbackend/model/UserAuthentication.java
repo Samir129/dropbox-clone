@@ -19,7 +19,7 @@ public class UserAuthentication implements UserDetails {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.role = user.getRole();
+        this.role = user.getRole().toString();
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

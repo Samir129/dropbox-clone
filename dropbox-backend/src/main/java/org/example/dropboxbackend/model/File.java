@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -18,6 +20,7 @@ public class File {
     private String fileName;
     private String contentType;
     private String filePath;
-
+    private String username;
+    private LocalDateTime lastModified;
 
 }

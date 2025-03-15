@@ -2,6 +2,7 @@ package org.example.dropboxbackend.exception;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -10,16 +11,14 @@ import java.time.LocalDateTime;
 public class ErrorResponse {
 
     private LocalDateTime timestamp;
-    private int status;
-    private String error;
+    private HttpStatus status;
+    private Throwable error;
     private String message;
-    private String path;
 
-    public ErrorResponse(int status, String error, String message, String path) {
+    public ErrorResponse(HttpStatus status, Throwable error, String message) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
         this.error = error;
         this.message = message;
-        this.path = path;
     }
 }

@@ -3,7 +3,7 @@ package org.example.dropboxbackend.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dropboxbackend.controller.AuthController;
-import org.example.dropboxbackend.exception.CustomValidationException;
+import org.example.dropboxbackend.exception.CustomExceptionResponse;
 import org.example.dropboxbackend.model.Role;
 import org.example.dropboxbackend.model.User;
 import org.example.dropboxbackend.model.UserAuthentication;
@@ -25,10 +25,10 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
-    public void registerUser(AuthController.RegisterRequest request){
+    public boolean registerUser(AuthController.RegisterRequest request){
         if (userRepository.existsByUsername(request.getUsername())) {
             log.warn("Requested user already exists...");
-            throw new CustomValidationException("User already exists!", HttpStatus.BAD_REQUEST);
+            return false;
         }
 
         User user = new User();
@@ -39,12 +39,13 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
         log.info("User {} saved", request.getUsername());
+        return true;
     }
 
     public void registerAdmin(AuthController.RegisterRequest request){
         if (userRepository.existsByUsername(request.getUsername())) {
             log.warn("Requested user already exists");
-            throw new CustomValidationException("Admin already exists", HttpStatus.BAD_REQUEST);
+            throw new CustomExceptionResponse("Admin already exists", HttpStatus.BAD_REQUEST);
         }
 
         User user = new User();
@@ -60,6 +61,24 @@ public class UserService implements UserDetailsService {
     public void deleteAll(){
         userRepository.deleteAll();
         log.info("All users deleted");
+    }
+
+    public boolean deleteUser(String username){
+        if (!userRepository.existsByUsername(username)) {
+            return false;
+        }
+        userRepository.deleteByUsername(username);
+        return true;
+    }
+
+    public void deleteAllUsers(){
+        try {
+            userRepository.deleteAll();
+        } catch (Exception e) {
+            log.error("Delete all users failed with error {}", e.getMessage());
+            throw new CustomExceptionResponse("Delete Failed with error " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @Override

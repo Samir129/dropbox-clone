@@ -36,8 +36,8 @@ public class GlobalExceptionHandler {
     }
 
     // Handle custom validation exception
-    @ExceptionHandler(CustomValidationException.class)
-    public ResponseEntity<?> handleCustomValidations(CustomValidationException ex){
+    @ExceptionHandler(CustomExceptionResponse.class)
+    public ResponseEntity<?> handleCustomValidations(CustomExceptionResponse ex){
         ErrorResponse errorResponse = new ErrorResponse(ex.getStatus(), ex.getCause(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, ex.getStatus());
     }

@@ -4,9 +4,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dropboxbackend.exception.CustomValidationException;
+import org.example.dropboxbackend.exception.CustomExceptionResponse;
 import org.example.dropboxbackend.model.Role;
 import org.example.dropboxbackend.service.UserService;
 import org.example.dropboxbackend.util.JwtUtil;
@@ -18,7 +22,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -40,8 +47,12 @@ public class AuthController {
     @PostMapping("/register/user")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){
         log.info("Register user endpoint -- enter");
-        userService.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(request.getUsername()));
+        boolean isRegistered = userService.registerUser(request);
+
+        if (isRegistered)
+            return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(request.getUsername()));
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists!");
     }
 
     @PostMapping("/register/admin")
@@ -70,22 +81,15 @@ public class AuthController {
             return null;
         } catch (BadCredentialsException e){
             log.warn("Bad credentials entered by: {}", request.username);
-            throw new CustomValidationException("Bad Credentials", HttpStatus.FORBIDDEN);
+            throw new CustomExceptionResponse("Bad Credentials", HttpStatus.FORBIDDEN);
         } catch (Exception e){
-            throw new CustomValidationException("Error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomExceptionResponse("Error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteAllUsers(){
-        log.info("Delete all users endpoint -- enter");
-        userService.deleteAll();
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
-    }
 
     @Getter
     @Setter
-
     public static class RegisterRequest{
 
         @NotNull(message = "Username cannot be null")

@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -42,12 +43,13 @@ public class FileService {
             String newFileName = System.currentTimeMillis() + "_" + fileName;
             Path destination = this.rootLocation.resolve(newFileName);
 
-            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);  // save the file to storage
 
             File fileEntity = new File();
             fileEntity.setFileName(fileName);
             fileEntity.setContentType(file.getContentType());
             fileEntity.setFilePath(destination.toString());
+            fileEntity.setLastModified(LocalDateTime.now());
 
             return fileRepository.save(fileEntity);
         }

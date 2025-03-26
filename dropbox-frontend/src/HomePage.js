@@ -105,8 +105,8 @@ function HomePage() {
           className="btn btn-primary rounded-circle p-0 d-flex align-items-center justify-content-center me-3"
           style={{
             cursor: "pointer",
-            width: "40px",
-            height: "40px",
+            width: "50px",
+            height: "50px",
             fontSize: "1rem",
           }}
           role="button"

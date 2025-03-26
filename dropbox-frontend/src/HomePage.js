@@ -4,6 +4,18 @@ import { ListGroup, Button } from "react-bootstrap";
 import Loader from "./components/Loader";
 import { FaPlus } from "react-icons/fa";
 
+const formatDate = (date) => {
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  return new Date(date).toLocaleDateString("en-US", options);
+};
+
 function HomePage() {
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -141,7 +153,12 @@ function HomePage() {
             onClick={() => handleDownload(file)}
             disabled={isDownloading}
           >
-            {file.fileName}
+            <div className="d-flex justify-content-between">
+              <span>{file.fileName}</span>
+              <span className="text-muted" style={{ fontSize: "0.875rem" }}>
+                {file.lastModified ? formatDate(file.lastModified) : "No Date"}
+              </span>
+            </div>
           </ListGroup.Item>
         ))}
       </ListGroup>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ListGroup, Button } from "react-bootstrap";
 import Loader from "./components/Loader";
+import { FaPlus } from "react-icons/fa";
 
 function HomePage() {
   const [files, setFiles] = useState([]);
@@ -65,23 +66,67 @@ function HomePage() {
 
   return (
     <div className="container mt-5">
-      <h1>My Dropbox</h1>
+      <h1
+        className="text-center text-primary mb-4"
+        style={{
+          fontFamily: "Arial, sans-serif",
+          fontSize: "2.5rem",
+          fontWeight: "700",
+        }}
+      >
+        My Dropbox
+      </h1>
 
       {/* Upload Section */}
-      <div className="mb-4">
+      <div className="mb-4 d-flex align-items-center">
         <input
           type="file"
+          id="file-upload"
           onChange={(e) => setSelectedFile(e.target.files[0])}
           disabled={isUploading}
+          style={{ display: "none" }}
         />
+
+        {/* Custom styled upload button */}
+        <label
+          htmlFor="file-upload" // Associate label with hidden input
+          className="btn btn-primary rounded-circle p-0 d-flex align-items-center justify-content-center me-3"
+          style={{
+            cursor: "pointer",
+            width: "40px",
+            height: "40px",
+            fontSize: "1rem",
+          }}
+          role="button"
+          aria-label="Upload file"
+        >
+          <FaPlus /> {/* React Icons plus symbol */}
+        </label>
+
         <Button
-          variant="primary"
+          variant="success"
           onClick={handleUpload}
           disabled={!selectedFile || isUploading}
-          className="ms-2"
+          className="ms-auto"
+          style={{ minWidth: "120px" }}
         >
-          {isUploading ? "Uploading..." : "Upload File"}
+          {isUploading ? (
+            <span className="d-flex align-items-center">
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                role="status"
+              />
+              Uploading
+            </span>
+          ) : (
+            "Upload File"
+          )}
         </Button>
+
+        {/* Show selected file name */}
+        {selectedFile && (
+          <span className="ms-3 text-muted">Selected: {selectedFile.name}</span>
+        )}
       </div>
 
       {/* Loader */}
